@@ -1,0 +1,28 @@
+name: Deploy latest.yml and assets to Surge
+
+on:
+    release:
+        types: [published]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: 📦 Checkout repo
+              uses: actions/checkout@v4
+
+            - name: 🧩 Descargar assets del release principal
+              uses: robinraju/release-downloader@v1.10
+              with:
+                  repository: SIDGE-S-A/POSOneAutoServicio
+                  latest: true
+                  out-file-path: ./public
+
+            - name: 📋 Listar archivos descargados (debug)
+              run: ls -R ./public
+
+            - name: 🚀 Instalar y desplegar en Surge
+              run: |
+                  npm install -g surge
+                  surge ./public posoneauto-updates.surge.sh --token ${{ secrets.SURGE_TOKEN }}
