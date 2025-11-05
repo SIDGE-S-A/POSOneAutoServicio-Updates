@@ -21,7 +21,16 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
+      # 👇 Nuevo paso: copia el netlify.toml correcto al directorio público
+      - name: 🪄 Copiar netlify.toml al directorio público
+        run: |
+          cp netlify.toml ./public/netlify.toml
+          echo "✅ netlify.toml copiado a ./public"
+
       - name: 🚀 Deploy to Netlify
         run: |
           npm install -g netlify-cli
-          netlify deploy --dir=public --prod --site ${{ secrets.NETLIFY_SITE_ID }} --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          netlify deploy --dir=public --prod \
+            --site ${{ secrets.NETLIFY_SITE_ID }} \
+            --auth ${{ secrets.NETLIFY_AUTH_TOKEN }} \
+            --message "Deploy automático con netlify.toml correcto"
