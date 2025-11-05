@@ -1,4 +1,4 @@
-name: Deploy Updates to Surge
+name: Deploy Updates to Netlify
 
 on:
   repository_dispatch:
@@ -9,16 +9,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Checkout updates repo
+      - name: 📦 Checkout repository
         uses: actions/checkout@v4
 
-      - name: 🧩 Debug acceso a release (repo de Updates)
-        run: |
-          echo "Verificando acceso al release más reciente en POSOneAutoServicio-Updates..."
-          curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-               https://api.github.com/repos/SIDGE-S-A/POSOneAutoServicio-Updates/releases/latest
-
-      - name: 🧩 Descargar assets del release (desde Updates)
+      - name: 🧩 Descargar assets del release
         uses: robinraju/release-downloader@v1.10
         with:
           repository: SIDGE-S-A/POSOneAutoServicio-Updates
@@ -27,10 +21,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      - name: 📋 Listar archivos descargados
-        run: ls -R ./public
-
-      - name: 🚀 Deploy to Surge
+      - name: 🚀 Deploy to Netlify
         run: |
-          npm install -g surge
-          surge ./public posoneauto-updates.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+          npm install -g netlify-cli
+          netlify deploy --dir=public --prod --site ${{ secrets.NETLIFY_SITE_ID }} --auth ${{ secrets.NETLIFY_AUTH_TOKEN }}
