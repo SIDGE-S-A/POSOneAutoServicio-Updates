@@ -1,0 +1,27 @@
+[build]
+  publish = "public"
+  command = "echo 'Netlify deployment ready'"
+
+[[headers]]
+  for = "/*.yml"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.yaml"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.exe"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Access-Control-Allow-Origin = "*"
+
+[[headers]]
+  for = "/*.blockmap"
+  [headers.values]
+    Content-Type = "application/octet-stream"
+    Access-Control-Allow-Origin = "*"
