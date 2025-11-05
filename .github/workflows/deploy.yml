@@ -1,30 +1,36 @@
 name: Deploy Updates to Surge
 
 on:
-    repository_dispatch:
-        types: [deploy-from-main]
+  repository_dispatch:
+    types: [deploy-from-main]
 
 jobs:
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        steps:
-            - name: 📦 Checkout updates repo
-              uses: actions/checkout@v4
-            - name: 🧩 Debug acceso a release
-              run: |
-                  curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
-                      https://api.github.com/repos/SIDGE-S-A/POSOneAutoServicio/releases/latest
-            - name: 🧩 Descargar assets del release principal
-              uses: robinraju/release-downloader@v1.10
-              with:
-                  repository: SIDGE-S-A/POSOneAutoServicio
-                  latest: true
-                  out-file-path: ./public
-              env:
-                  GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: 📦 Checkout updates repo
+        uses: actions/checkout@v4
 
-            - name: 🚀 Deploy to Surge
-              run: |
-                  npm install -g surge
-                  surge ./public posoneauto-updates.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+      - name: 🧩 Debug acceso a release (repo de Updates)
+        run: |
+          echo "Verificando acceso al release más reciente en POSOneAutoServicio-Updates..."
+          curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+               https://api.github.com/repos/SIDGE-S-A/POSOneAutoServicio-Updates/releases/latest
+
+      - name: 🧩 Descargar assets del release (desde Updates)
+        uses: robinraju/release-downloader@v1.10
+        with:
+          repository: SIDGE-S-A/POSOneAutoServicio-Updates
+          latest: true
+          out-file-path: ./public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: 📋 Listar archivos descargados
+        run: ls -R ./public
+
+      - name: 🚀 Deploy to Surge
+        run: |
+          npm install -g surge
+          surge ./public posoneauto-updates.surge.sh --token ${{ secrets.SURGE_TOKEN }}
