@@ -25,3 +25,9 @@
   [headers.values]
     Content-Type = "application/octet-stream"
     Access-Control-Allow-Origin = "*"
+    
+[[redirects]]
+  from = "/latest.yml"
+  to = "/latest.yml"
+  status = 200
+  force = true
