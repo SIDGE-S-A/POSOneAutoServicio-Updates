@@ -11,13 +11,19 @@ jobs:
         steps:
             - name: 📦 Checkout updates repo
               uses: actions/checkout@v4
-
-            - name: 🧩 Download assets from main release
+            - name: 🧩 Debug acceso a release
+              run: |
+                curl -H "Authorization: token ${{ secrets.GH_TOKEN }}" \
+                    https://api.github.com/repos/SIDGE-S-A/POSOneAutoServicio/releases/latest
+            - name: 🧩 Descargar assets del release principal
               uses: robinraju/release-downloader@v1.10
               with:
-                  repository: SIDGE-S-A/POSOneAutoServicio
-                  latest: true
-                  out-file-path: ./public
+                repository: SIDGE-S-A/POSOneAutoServicio
+                latest: true
+                out-file-path: ./public
+              env:
+                GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
 
             - name: 🚀 Deploy to Surge
               run: |
