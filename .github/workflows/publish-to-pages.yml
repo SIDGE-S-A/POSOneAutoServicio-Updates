@@ -1,25 +1,39 @@
 name: Publish latest.yml to GitHub Pages
+
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
+
+permissions:
+    contents: write # 🔓 Necesario para poder hacer push
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: true
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
+    deploy:
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
 
-    steps:
-      - name: 📦 Checkout repository
-        uses: actions/checkout@v4
+        steps:
+            - name: 📦 Checkout repository
+              uses: actions/checkout@v4
 
-      - name: 🧩 Download assets from release
-        uses: robinraju/release-downloader@v1.10
-        with:
-          repository: SIDGE-S-A/POSOneAutoServicio-Updates
-          latest: true
-          out-file-path: ./public
+            - name: 🧩 Download assets from release
+              uses: robinraju/release-downloader@v1.10
+              with:
+                  repository: SIDGE-S-A/POSOneAutoServicio-Updates
+                  latest: true
+                  out-file-path: ./public
 
-      - name: 🚀 Deploy latest.yml to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
+            - name: 🚀 Deploy latest.yml to GitHub Pages
+              uses: peaceiris/actions-gh-pages@v3
+              with:
+                  github_token: ${{ secrets.GITHUB_TOKEN }}
+                  publish_dir: ./public
+                  publish_branch: gh-pages
