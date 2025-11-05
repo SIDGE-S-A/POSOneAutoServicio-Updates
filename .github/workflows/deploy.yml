@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: 📦 Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 👈 Asegura que trae todos los archivos, incluyendo netlify.toml
 
       - name: 🧩 Descargar assets del release
         uses: robinraju/release-downloader@v1.10
@@ -21,11 +23,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
 
-      # 👇 Nuevo paso: copia el netlify.toml correcto al directorio público
+      # 👇 Copiamos el netlify.toml desde la raíz hacia ./public/
       - name: 🪄 Copiar netlify.toml al directorio público
         run: |
-          cp netlify.toml ./public/netlify.toml
-          echo "✅ netlify.toml copiado a ./public"
+          if [ -f netlify.toml ]; then
+            cp netlify.toml ./public/netlify.toml
+            echo "✅ netlify.toml copiado a ./public/"
+          else
+            echo "⚠️ netlify.toml no encontrado en la raíz del repo"
+            ls -la
+            exit 1
+          fi
 
       - name: 🚀 Deploy to Netlify
         run: |
@@ -33,4 +41,4 @@ jobs:
           netlify deploy --dir=public --prod \
             --site ${{ secrets.NETLIFY_SITE_ID }} \
             --auth ${{ secrets.NETLIFY_AUTH_TOKEN }} \
-            --message "Deploy automático con netlify.toml correcto"
+            --message "Deploy automático con netlify.toml desde raíz"
